@@ -12,21 +12,28 @@ window.addEventListener('load', function onLoad() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const shape = new Circle();
+    let shape = new Circle();
+    shape = Polygon.makeRegularPolygon(3, Math.min(canvas.width, canvas.height) / 3);
     shape
         .setPosition(canvas.width / 2, canvas.height / 2)
-        .setRadius(Math.min(canvas.width, canvas.height) / 3)
         .addMarkerTimes(null, 5)
         .drawShape(ctx)
         .drawCenter(ctx)
         .drawMarkers(ctx)
-
-    window.addEventListener('resize', () => {
+    function setup() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         shape
             .setPosition(canvas.width / 2, canvas.height / 2)
-            .setRadius(Math.min(canvas.width, canvas.height) / 3)
+        if (shape instanceof Circle) {
+            shape
+                .setRadius(Math.min(canvas.width, canvas.height) / 3)
+        }
+
+    }
+    setup();
+    window.addEventListener('resize', () => {
+        setup();
     })
 
     let lastT = null;

@@ -26,7 +26,48 @@ class Shape {
     drawShape(ctx) {
         return this;
     }
-    drawMarkers(ctx) {
+    drawMarkers(ctx, markerToPointMappingFunction) {
+        const markers = this.markers
+            .sort((markerA, markerB) => markerA.position - markerB.position)
+            .map(markerToPointMappingFunction)
+        markers.forEach(([point, _marker]) => {
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, 2, 0, 2 * Math.PI);
+            ctx.fillStyle = this.markerStyle.fillStyle;
+            ctx.strokeStyle = this.markerStyle.strokeStyle;
+            ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
+        })
+        ctx.beginPath();
+        let [{ x0, y0 }] = markers[0];
+        ctx.moveTo(x0, y0);
+        markers.forEach(([point, _marker]) => {
+            let { x, y } = point;
+            ctx.lineTo(x, y);
+        })
+        ctx.fillStyle = this.figureStyle.fillStyle;
+        ctx.strokeStyle = this.figureStyle.strokeStyle;
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        // const connectMarkerPoints = (pointA, pointB) => {
+        //     let { x, y } = pointA,
+        //         { x: x2, y: y2 } = pointB;
+        //     ctx.moveTo(x, y);
+        //     ctx.lineTo(x2, y2);
+        //     ctx.strokeStyle = "red";
+        //     ctx.stroke();
+        // }
+        // for (let i = 1; i < markers.length; i++) {
+        //     connectMarkerPoints(markers[i][0], markers[i - 1][0]);
+        // }
+        // if (markers.length > 1) {
+        //     connectMarkerPoints(markers[0][0], markers[markers.length - 1][0]);
+        // }
+        return this;
+    }
+    drawCenter(ctx) {
         return this;
     }
     addMarker(marker = null) {
