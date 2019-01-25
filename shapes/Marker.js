@@ -3,6 +3,7 @@ class Marker {
         this.movementDirection = 1;
         this.movementSpeed = .0001;
         this.position = 0;
+        this.id = Math.round(Math.random() * 1000);
     }
     setPosition(positionPercent) {
         this.position = positionPercent;

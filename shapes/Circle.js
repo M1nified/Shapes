@@ -17,15 +17,6 @@ class Circle extends Shape {
         ctx.fill();
         return super.drawShape(ctx);
     }
-    drawCenter(ctx) {
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, 2, 0, 2 * Math.PI);
-        ctx.fillStyle = "black";
-        ctx.fill();
-        ctx.stroke();
-        ctx.closePath();
-        return this;
-    }
     drawMarkers(ctx) {
         const markerToPointMapping = marker => {
             const

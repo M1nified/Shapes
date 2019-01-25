@@ -1,9 +1,10 @@
 "use strict";
 
 const settings = {
-    speedScale: 0.000002
+    speedScale: 0.000002,
+    corners: 3,
+    markers: 5
 }
-
 window.addEventListener('load', function onLoad() {
     const
         canvas = document.querySelector('.canvas'),
@@ -11,29 +12,56 @@ window.addEventListener('load', function onLoad() {
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    let shape
 
-    let shape = new Circle();
-    shape = Polygon.makeRegularPolygon(3, Math.min(canvas.width, canvas.height) / 3);
-    shape
-        .setPosition(canvas.width / 2, canvas.height / 2)
-        .addMarkerTimes(null, 5)
-        .drawShape(ctx)
-        .drawCenter(ctx)
-        .drawMarkers(ctx)
     function setup() {
+        if (settings.corners < 3)
+            shape = new Circle();
+        else
+            shape = Polygon.makeRegularPolygon(settings.corners, Math.min(canvas.width, canvas.height) / 3, shape);
+        shape
+            .adjustMarkerCount(settings.markers)
+            // .addMarker(new Marker().setPosition(0))
+            // .addMarker(new Marker().setPosition(0.25))
+            // .addMarker(new Marker().setPosition(0.60))
+            // .addMarker(new Marker().setPosition(0.65))
+            // .addMarker(new Marker().setPosition(0.75))
+            // .addMarker(new Marker().setPosition(0.15))
+            .drawShape(ctx)
+            .drawCenter(ctx)
+            .drawMarkers(ctx)
+
+    }
+    function fitScreen() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        shape
-            .setPosition(canvas.width / 2, canvas.height / 2)
         if (shape instanceof Circle) {
             shape
                 .setRadius(Math.min(canvas.width, canvas.height) / 3)
+        } else if (shape instanceof Polygon) {
+            shape = Polygon.makeRegularPolygon(settings.corners, Math.min(canvas.width, canvas.height) / 3, shape);
         }
+        shape
+            .setPosition(canvas.width / 2, canvas.height / 2)
 
     }
     setup();
+    fitScreen();
     window.addEventListener('resize', () => {
+        fitScreen();
+    })
+    window.addEventListener("wheel", event => {
+        if (event.shiftKey) {
+            settings.corners -= Math.sign(event.deltaY);
+            settings.corners = Math.max(settings.corners, 2);
+        } else {
+            settings.markers -= Math.sign(event.deltaY);
+            settings.markers = Math.max(settings.markers, 2);
+            shape.adjustMarkerCount(settings.markers)
+        }
         setup();
+        fitScreen();
+
     })
 
     let lastT = null;
@@ -41,7 +69,6 @@ window.addEventListener('load', function onLoad() {
         if (lastT === null)
             lastT = timestamp
         const dT = timestamp - lastT;
-        // Store the current transformation matrix
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);

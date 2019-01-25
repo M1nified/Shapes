@@ -68,6 +68,12 @@ class Shape {
         return this;
     }
     drawCenter(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.position.x, this.position.y, 2, 0, 2 * Math.PI);
+        ctx.fillStyle = "black";
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
         return this;
     }
     addMarker(marker = null) {
@@ -77,11 +83,29 @@ class Shape {
         this.markers.push(marker);
         return this;
     }
+    addMarkers(markers = []) {
+        markers.forEach(marker => {
+            if (marker instanceof Marker) {
+                this.addMarker(marker);
+            }
+        });
+        return this;
+    }
     addMarkerTimes(marker = null, times) {
         for (let i = 0; i < times; i++)
             this.addMarker(marker);
         return this;
     }
+    adjustMarkerCount(count) {
+        while (this.markers.length > count) {
+            this.markers.pop();
+        }
+        while (this.markers.length < count) {
+            this.addMarker();
+        }
+        return this;
+    }
+
     updateMarkersByTime(dT) {
         this.markers.forEach(marker => marker.updateByTime(dT));
         return this;
